@@ -85,6 +85,7 @@ impl<T> QueryFragment<Pg> for Paginated<T>
         T: QueryFragment<Pg>,
 {
     fn walk_ast<'b>(&'b self, mut out: AstPass<'_, 'b, Pg>) -> QueryResult<()> {
+        out.unsafe_to_cache_prepared();
         if self.page.is_some() && self.some_per_page.is_some() {
             out.push_sql("SELECT *, COUNT(*) OVER () FROM (");
             self.query.walk_ast(out.reborrow())?;
